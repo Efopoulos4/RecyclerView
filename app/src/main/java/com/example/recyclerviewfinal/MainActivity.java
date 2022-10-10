@@ -24,7 +24,7 @@ import java.util.LinkedList;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final LinkedList<String> mWordList = new LinkedList<>();
+    private final LinkedList<Item> mItemList = new LinkedList<>();
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
     private RecyclerView mRecyclerView;
@@ -34,14 +34,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         for (int i = 0; i < 20; i++) {
-            mWordList.addLast("Word " + i);
+            mItemList.addLast(new Item("Word " + i, false));
         }
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setSupportActionBar(binding.toolbar);
 
         mRecyclerView = findViewById(R.id.recyclerView);
-        mAdapter = new WordListAdapter(this, mWordList);
+        mAdapter = new WordListAdapter(this, mItemList);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -51,8 +51,9 @@ public class MainActivity extends AppCompatActivity {
 
         binding.fab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                int wordListSize = mWordList.size();
-                mWordList.addLast("+ Word " + wordListSize);
+                int wordListSize = mItemList.size();
+
+                mItemList.addLast(new Item("+ Word " + wordListSize, false));
                 mRecyclerView.getAdapter().notifyItemInserted(wordListSize);
                 mRecyclerView.smoothScrollToPosition(wordListSize);
             }

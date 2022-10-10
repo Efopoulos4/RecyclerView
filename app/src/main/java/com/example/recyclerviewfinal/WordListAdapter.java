@@ -13,7 +13,7 @@ import java.util.LinkedList;
 
 public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.WordViewHolder> {
 
-    private final LinkedList<String> mWordList;
+    private final LinkedList<Item> mItemList;
     private final LayoutInflater mInflater;
 
     class WordViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -30,16 +30,17 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.WordVi
         @Override
         public void onClick(View view) {
             int mPosition = getLayoutPosition();
-            String element = mWordList.get(mPosition);
-            mWordList.set(mPosition, "Clicked! " + element);
-            mAdapter.notifyDataSetChanged();
-
+            Item element = mItemList.get(mPosition);
+            if(!element.isClicked()) {
+                mItemList.set(mPosition, new Item("Clicked! " + element.getWord(), true));
+                mAdapter.notifyDataSetChanged();
+            }
         }
     }
 
-    public WordListAdapter(Context context, LinkedList<String> wordList) {
+    public WordListAdapter(Context context, LinkedList<Item> wordList) {
         mInflater = LayoutInflater.from(context);
-        this.mWordList = wordList;
+        this.mItemList = wordList;
     }
 
     @NonNull
@@ -51,13 +52,13 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.WordVi
 
     @Override
     public void onBindViewHolder(@NonNull WordListAdapter.WordViewHolder holder, int position) {
-        String mCurrent = mWordList.get(position);
-        holder.wordItemView.setText(mCurrent);
+        Item mCurrent = mItemList.get(position);
+        holder.wordItemView.setText(mCurrent.getWord());
     }
 
     @Override
     public int getItemCount() {
-        return mWordList.size();
+        return mItemList.size();
     }
 
 
