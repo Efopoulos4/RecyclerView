@@ -2,10 +2,9 @@ package com.example.recyclerviewfinal;
 
 import android.os.Bundle;
 
-import com.google.android.material.snackbar.Snackbar;
-
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.Log;
 import android.view.View;
 
 import androidx.navigation.NavController;
@@ -24,7 +23,8 @@ import java.util.LinkedList;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final LinkedList<Item> mItemList = new LinkedList<>();
+    private final LinkedList<Item> hItemList = new LinkedList<>();
+    private LinkedList<Item> mItemList = new LinkedList<>();
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
     private RecyclerView mRecyclerView;
@@ -33,9 +33,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        for (int i = 0; i < 20; i++) {
-            mItemList.addLast(new Item("Word " + i, false));
+        for (int i = 1; i <= 20; i++) {
+            hItemList.addLast(new Item("Word " + i, false));
         }
+        mItemList = (LinkedList<Item>) hItemList.clone();
+
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setSupportActionBar(binding.toolbar);
@@ -75,7 +77,11 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_reset) {
+            mItemList = (LinkedList<Item>) hItemList.clone();
+            mAdapter.resetAdapter(mItemList);
+            mAdapter.notifyDataSetChanged();
+            mRecyclerView.smoothScrollToPosition(0);
             return true;
         }
 
@@ -88,4 +94,6 @@ public class MainActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp();
     }
+
+
 }

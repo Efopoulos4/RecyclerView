@@ -13,8 +13,12 @@ import java.util.LinkedList;
 
 public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.WordViewHolder> {
 
-    private final LinkedList<Item> mItemList;
+    private LinkedList<Item> mItemList;
     private final LayoutInflater mInflater;
+
+    public void resetAdapter(LinkedList<Item> items) {
+        this.mItemList = items;
+    }
 
     class WordViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public final TextView wordItemView;
