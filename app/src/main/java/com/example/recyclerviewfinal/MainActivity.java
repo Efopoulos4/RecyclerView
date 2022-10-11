@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 int wordListSize = mItemList.size();
 
-                mItemList.addLast(new Item("+ Word " + wordListSize, false));
+                mItemList.addLast(new Item("+ Word " + (wordListSize+1), false));
                 mRecyclerView.getAdapter().notifyItemInserted(wordListSize);
                 mRecyclerView.smoothScrollToPosition(wordListSize);
             }

@@ -1,6 +1,7 @@
 package com.example.recyclerviewfinal;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +21,7 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.WordVi
         this.mItemList = items;
     }
 
-    class WordViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class WordViewHolder extends RecyclerView.ViewHolder {
         public final TextView wordItemView;
         final WordListAdapter mAdapter;
 
@@ -28,17 +29,6 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.WordVi
             super(itemView);
             wordItemView = itemView.findViewById(R.id.word);
             this.mAdapter = adapter;
-            itemView.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View view) {
-            int mPosition = getLayoutPosition();
-            Item element = mItemList.get(mPosition);
-            if(!element.isClicked()) {
-                mItemList.set(mPosition, new Item("Clicked! " + element.getWord(), true));
-                mAdapter.notifyDataSetChanged();
-            }
         }
     }
 
@@ -51,7 +41,19 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.WordVi
     @Override
     public WordListAdapter.WordViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View mItemView = mInflater.inflate(R.layout.wordlist_item, parent, false);
-        return new WordViewHolder(mItemView, this);
+        final WordViewHolder holder = new WordViewHolder(mItemView, this);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int mPosition = holder.getLayoutPosition();
+                Item element = mItemList.get(mPosition);
+                if (!element.isClicked()) {
+                    mItemList.set(mPosition, new Item("Clicked! " + element.getWord(), true));
+                    holder.mAdapter.notifyDataSetChanged();
+                }
+            }
+        });
+        return holder;
     }
 
     @Override
@@ -64,6 +66,4 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.WordVi
     public int getItemCount() {
         return mItemList.size();
     }
-
-
 }
