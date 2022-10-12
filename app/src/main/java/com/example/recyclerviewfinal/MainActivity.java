@@ -1,24 +1,17 @@
 package com.example.recyclerviewfinal;
-
 import android.os.Bundle;
-
+import android.os.Handler;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.util.Log;
-import android.view.View;
-
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.recyclerviewfinal.databinding.ActivityMainBinding;
-
 import android.view.Menu;
 import android.view.MenuItem;
-
 import java.util.LinkedList;
 
 public class MainActivity extends AppCompatActivity {
@@ -28,7 +21,8 @@ public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
     private RecyclerView mRecyclerView;
-    private WordListAdapter mAdapter;
+    private RecycleViewAdapter mAdapter;
+    private boolean isLoading = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 1; i <= 20; i++) {
             hItemList.addLast(new Item("Word " + i, false));
         }
+
         mItemList = (LinkedList<Item>) hItemList.clone();
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
@@ -43,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(binding.toolbar);
 
         mRecyclerView = findViewById(R.id.recyclerView);
-        mAdapter = new WordListAdapter(this, mItemList);
+        mAdapter = new RecycleViewAdapter(this, mItemList);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -51,15 +46,40 @@ public class MainActivity extends AppCompatActivity {
         appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
-        binding.fab.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                int wordListSize = mItemList.size();
-
-                mItemList.addLast(new Item("+ Word " + (wordListSize+1), false));
-                mRecyclerView.getAdapter().notifyItemInserted(wordListSize);
-                mRecyclerView.smoothScrollToPosition(wordListSize);
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) mRecyclerView.getLayoutManager();
+                if (!isLoading) {
+                    if (linearLayoutManager != null && linearLayoutManager.findLastCompletelyVisibleItemPosition() == mItemList.size() - 1) {
+                        isLoading = true;
+                        getMoreData(10);
+                    }
+                }
             }
         });
+    }
+
+    private void getMoreData(int num) {
+        mItemList.addLast(null);
+        mAdapter.notifyDataSetChanged();
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mItemList.remove(mItemList.size() - 1);
+                int currentSize = mItemList.size();
+                int nextSize = currentSize + num;
+                while (currentSize < nextSize) {
+                    mItemList.addLast(new Item("Word " + (currentSize + 1), false));
+                    currentSize++;
+                }
+                mAdapter.notifyDataSetChanged();
+                isLoading = false;
+            }
+        }, 1000);
+
     }
 
     @Override
@@ -94,6 +114,11 @@ public class MainActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp();
     }
+
+//--------------------------------------------------------------------------------------------------//
+
+
+//--------------------------------------------------------------------------------------------------//
 
 
 }
