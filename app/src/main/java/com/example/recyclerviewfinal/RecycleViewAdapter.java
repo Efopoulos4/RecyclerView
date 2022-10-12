@@ -1,17 +1,12 @@
 package com.example.recyclerviewfinal;
-
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
-
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.LinkedList;
 
 public class RecycleViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -91,7 +86,6 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public int getItemViewType(int position) {
         if(mItemList.get(position) == null) {
-            Log.d("paok", "LOADING");
             return VIEW_TYPE_LOADING;
         } else {
             return VIEW_TYPE_ITEM;
